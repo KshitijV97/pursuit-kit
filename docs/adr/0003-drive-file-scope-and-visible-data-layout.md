@@ -1,6 +1,6 @@
 # 0003. Use the drive.file scope and a visible app folder with JSON data files
 
-- **Status:** Accepted
+- **Status:** Accepted (revised 2026-11-18: REST over `fetch` and the upload path for Workers)
 - **Date:** 2026-11-18
 - **Plan:** [docs/plans/2026-11-18-1641-feat-pursuit-kit-mvp-plan.md](../plans/2026-11-18-1641-feat-pursuit-kit-mvp-plan.md) (KTD3)
 
@@ -32,7 +32,8 @@ Pursuit Kit/
 - Every JSON file carries a `schemaVersion` so later stages can migrate it.
 - Writes replace whole files. There is one user, so the app does not need locking. It does check each file's Drive `modifiedTime` before overwriting, and refuses if the file changed since it was read.
 - When a file the app expects is missing or in the Drive trash (`trashed: true`, which the API still returns normally), it reports which profile item or application is affected (R3), rather than failing silently. The folder search filters out trashed folders.
-- Uploads go from the browser straight to Drive through a resumable upload session the server creates, because Vercel rejects request bodies over 4.5 MB.
+- All Drive calls use the REST API with `fetch`. The `googleapis` package doesn't run on Cloudflare Workers (ADR 0007).
+- Every upload is a plain form whose multipart body the Worker streams, unparsed, to the doc service. The doc service writes each file to Drive through a resumable session with the owner's access token (for a LinkedIn zip, only the known CSVs) and returns the file IDs. JavaScript and no-JavaScript use the same path. The Worker never buffers the body, which keeps it inside its 10 ms CPU limit, and bodies are capped at 100 MB. The doc service later reads those files from Drive to extract text.
 
 ## Consequences
 

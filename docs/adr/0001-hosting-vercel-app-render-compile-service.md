@@ -1,6 +1,6 @@
 # 0001. Host the app on Vercel Hobby and the LaTeX compiler on Render free
 
-- **Status:** Accepted
+- **Status:** Superseded by [0007](0007-typescript-hono-workers-and-render-doc-service.md)
 - **Date:** 2026-11-18
 - **Plan:** [docs/plans/2026-11-18-1641-feat-pursuit-kit-mvp-plan.md](../plans/2026-11-18-1641-feat-pursuit-kit-mvp-plan.md) (KTD1)
 
