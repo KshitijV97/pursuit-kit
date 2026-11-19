@@ -1,0 +1,123 @@
+name: Deploy
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  verify-regression:
+    name: Regression passed for the release parent
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Require a passing regression run on main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          parent="$(gh api "repos/${GITHUB_REPOSITORY}/commits/tags/${TAG}" --jq '.parents[0].sha')"
+          conclusion="$(gh run list \
+            --repo "$GITHUB_REPOSITORY" \
+            --workflow regression.yml \
+            --commit "$parent" \
+            --limit 1 \
+            --json conclusion \
+            --jq '.[0].conclusion // "missing"')"
+          echo "Regression pack for the release parent ${parent}: ${conclusion}"
+          if [ "$conclusion" != "success" ]; then
+            echo "::error::A release deploys only from a commit whose parent passed the regression pack."
+            exit 1
+          fi
+
+  worker:
+    name: Deploy the Worker
+    needs: verify-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - name: Check out the released commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable corepack
+        run: |
+          npm install -g corepack@latest
+          corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # The single quotes keep the double quotes inside the define, so the version
+          # is substituted as a JavaScript string at build time.
+          command: deploy --define '__APP_VERSION__:"${{ github.event.release.tag_name }}"' --var APP_ENV:production
+
+  doc-service:
+    name: Build and deploy the doc service
+    needs: verify-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    steps:
+      - name: Check out the released commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push the image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: services/doc/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/pursuit-kit-doc:${{ github.event.release.tag_name }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ github.event.release.tag_name }}
+
+      # Skipped with a warning until the Render service exists (docs/setup/render.md).
+      - name: Call the Render deploy hook
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          IMAGE: ghcr.io/${{ github.repository_owner }}/pursuit-kit-doc:${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          if [ -z "${HOOK:-}" ]; then
+            echo "::warning::RENDER_DEPLOY_HOOK_URL is not set; skipping the Render deploy hook."
+            exit 0
+          fi
+          case "$HOOK" in
+            *\?*) separator="&" ;;
+            *) separator="?" ;;
+          esac
+          curl -fsSL --retry 3 -X POST "${HOOK}${separator}imgURL=${IMAGE}" > /dev/null
+          echo "Render deploy requested for ${IMAGE}"

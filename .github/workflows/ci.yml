@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, types, tests and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      # Node 26 no longer bundles corepack. pnpm comes from the packageManager field.
+      - name: Enable corepack
+        run: |
+          npm install -g corepack@latest
+          corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint and format
+        run: make lint
+
+      - name: Types
+        run: make typecheck
+
+      - name: Unit and integration tests
+        run: make test
+
+      - name: Build
+        run: make build
+
+      - name: Dependency audit
+        run: make audit
+
+  # Required check on every PR. It passes immediately for normal PRs. On release-please's
+  # release PR it waits for the regression pack that ran on the current main head (ADR 0008).
+  regression-gate:
+    name: Regression gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+    steps:
+      - name: Check the regression pack for this PR's base commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+
+          labels="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')"
+          if ! grep -qx 'autorelease: pending' <<<"$labels"; then
+            echo "Not a release PR. The regression pack runs after merge, so this check passes."
+            exit 0
+          fi
+
+          base_sha="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json baseRefOid --jq .baseRefOid)"
+          conclusion="$(gh run list \
+            --repo "$GITHUB_REPOSITORY" \
+            --workflow regression.yml \
+            --commit "$base_sha" \
+            --limit 1 \
+            --json conclusion \
+            --jq '.[0].conclusion // "missing"')"
+
+          echo "Release PR. Regression pack for $base_sha: $conclusion"
+          if [ "$conclusion" != "success" ]; then
+            echo "::error::The regression pack must pass on main before a release PR can merge."
+            exit 1
+          fi

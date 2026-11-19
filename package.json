@@ -1,0 +1,47 @@
+{
+  "name": "pursuit-kit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=26"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "lefthook",
+      "workerd"
+    ]
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:sanity": "vitest run --project app src/web/home.test.ts src/platform/version.test.ts && vitest run --project node scripts/check-budget.test.ts",
+    "knip": "knip",
+    "budget": "node scripts/check-budget.ts",
+    "e2e": "playwright test",
+    "docs-check": "node scripts/check-mermaid.ts",
+    "prepare": "lefthook install"
+  },
+  "dependencies": {
+    "hono": "^4.13.19"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@biomejs/biome": "^2.6.8",
+    "@cloudflare/vitest-plugin": "^1.8.5",
+    "@cloudflare/workers-types": "^5.20261118.1",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
+    "knip": "^6.46.1",
+    "lefthook": "^2.2.2",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1",
+    "wrangler": "^4.165.0"
+  }
+}
