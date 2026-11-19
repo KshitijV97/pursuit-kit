@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
 import { access, mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -50,22 +51,47 @@ function run(command: string, args: string[]): Promise<void> {
 
 /**
  * Renders every Mermaid block in docs/ so a syntax error fails the docs job (KTD15).
- * Uses @mermaid-js/mermaid-cli. In CI the workflow installs it with Chromium.
+ * Uses @mermaid-js/mermaid-cli: a local install, a global `mmdc` on PATH, or npx.
+ * MMDC_PUPPETEER_CONFIG passes a Puppeteer config, which CI needs to disable the Chromium sandbox.
  */
 async function main(): Promise<void> {
   const root = process.argv[2] ?? "docs";
   const files = await markdownFiles(root);
   const work = await mkdtemp(join(tmpdir(), "pursuit-kit-mermaid-"));
-  const localMmdc = join(process.cwd(), "node_modules", ".bin", "mmdc");
-  const command = process.env.MMDC ?? localMmdc;
-  const available = await access(command).then(
-    () => true,
-    () => false,
-  );
-  const runner = available
-    ? (args: string[]) => run(command, args)
-    : (args: string[]) => run("npx", ["-y", "@mermaid-js/mermaid-cli", ...args]);
 
+  async function exists(path: string): Promise<boolean> {
+    return access(path).then(
+      () => true,
+      () => false,
+    );
+  }
+
+  async function resolveRunner(): Promise<(args: string[]) => Promise<void>> {
+    if (process.env.MMDC) {
+      return (args) => run(process.env.MMDC as string, args);
+    }
+
+    const local = join(process.cwd(), "node_modules", ".bin", "mmdc");
+    if (await exists(local)) {
+      return (args) => run(local, args);
+    }
+
+    const onPath = (process.env.PATH ?? "")
+      .split(":")
+      .filter((entry) => entry.length > 0)
+      .map((entry) => join(entry, "mmdc"))
+      .find((candidate) => existsSync(candidate));
+
+    if (onPath) {
+      return (args) => run(onPath, args);
+    }
+
+    return (args) => run("npx", ["-y", "@mermaid-js/mermaid-cli", ...args]);
+  }
+
+  const puppeteerConfig = process.env.MMDC_PUPPETEER_CONFIG;
+  const extraArgs = puppeteerConfig ? ["-p", puppeteerConfig] : [];
+  const runner = await resolveRunner();
   let checked = 0;
 
   try {
@@ -77,7 +103,7 @@ async function main(): Promise<void> {
         const output = join(work, `diagram-${checked}.svg`);
         await writeFile(input, block, "utf8");
 
-        await runner(["-i", input, "-o", output, "-b", "transparent"]);
+        await runner(["-i", input, "-o", output, "-b", "transparent", ...extraArgs]);
 
         checked += 1;
       }

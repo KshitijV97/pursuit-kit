@@ -30,5 +30,12 @@ jobs:
       - name: Install Mermaid CLI
         run: npm install -g @mermaid-js/mermaid-cli
 
+      # mermaid-cli drives headless Chromium. GitHub's Ubuntu images disable unprivileged user
+      # namespaces, so Chromium needs the sandbox off in this throwaway runner.
+      - name: Write a Puppeteer config
+        run: echo '{"args":["--no-sandbox","--disable-setuid-sandbox"]}' > "$RUNNER_TEMP/puppeteer.json"
+
       - name: Render every Mermaid diagram in docs/
+        env:
+          MMDC_PUPPETEER_CONFIG: ${{ runner.temp }}/puppeteer.json
         run: node scripts/check-mermaid.ts docs
