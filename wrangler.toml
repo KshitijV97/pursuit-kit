@@ -1,0 +1,20 @@
+name = "pursuit-kit"
+main = "src/index.ts"
+compatibility_date = "2026-11-18"
+workers_dev = true
+
+[observability]
+enabled = true
+
+# APP_VERSION is substituted at build time (see scripts and .github/workflows/deploy.yml).
+# FAKE_EXTERNALS is a test-only variable. It is set by vitest and by `make e2e`, never in production.
+[vars]
+APP_ENV = "development"
+AI_MODEL_EXTRACTION = "claude-haiku-5-5"
+AI_MODEL_WRITING = "claude-sonnet-5-5"
+
+# Views import their stylesheet as text so the whole page arrives in one response.
+[[rules]]
+type = "Text"
+globs = ["**/*.css"]
+fallthrough = false

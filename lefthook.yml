@@ -1,0 +1,30 @@
+# lefthook runs the local quality gates. See ADR 0008 and docs/reference/make-targets.md.
+pre-commit:
+  parallel: true
+  jobs:
+    - name: biome
+      glob: "*.{ts,tsx,js,jsx,json,jsonc,css,md,yml,yaml}"
+      run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+
+    - name: gitleaks
+      run: gitleaks git --pre-commit --redact --staged --verbose
+
+    - name: sanity
+      run: make sanity
+
+commit-msg:
+  jobs:
+    - name: conventional commits
+      run: |
+        head -1 {1} | grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9._/-]+\))?!?: .{1,72}$' || {
+          echo "Commit message must follow Conventional Commits, for example:"
+          echo "  feat(generate): add page-fit trim loop"
+          echo "Types: feat fix docs style refactor perf test build ci chore revert"
+          exit 1
+        }
+
+pre-push:
+  jobs:
+    - name: check
+      run: make check

@@ -6,7 +6,7 @@ Pursuit Kit is a single-user web app that turns a job posting into a tailored re
 
 ## Status
 
-The repo is pre-code: only the plan and ADRs exist. U0 (repository foundation, PR 1) creates the tooling, Make targets and docs skeleton described below; U1–U10 follow in PR 2. Until U0 lands, a command listed here may not exist yet. When it does land, update this file so it matches what actually exists.
+U0 (repository foundation, PR 1) is in place: tooling, Make targets, the Worker hello page, the doc-service health checks, the CI and regression workflows, and the docs skeleton. U1–U10 follow in PR 2. A command listed here exists unless the unit that adds it has not landed yet; when a unit changes a command, update this file in the same PR.
 
 ## Sources of truth
 
@@ -42,19 +42,23 @@ Stop and ask the owner before:
 - `src/platform/`: session crypto, CSRF, config, logging, version.
 - `services/doc/`: the doc service and its Docker integration tests.
 - `tests/fixtures/` (recorded AI and Drive responses, sample inputs), `tests/e2e/` (Playwright).
+- `scripts/`: the page-budget check and the Mermaid renderer used by the gates.
+- `.github/`: CI, regression, docs, release and deploy workflows; Dependabot; PR template.
 - `docs/`: `setup/` one-time checklists, `runbooks/` repeatable tasks, `reference/` env vars, Make targets, data model; `adr/`, `plans/`, `brainstorms/`.
 
 ## Commands
 
 Use the Make targets; they wrap the pnpm scripts.
 
-- `make sanity`: pre-commit pack (claim validator, allowlist, LaTeX escaping), under 10 s.
+- `make install`: `pnpm install`, which also runs the `prepare` script that installs the hooks.
+- `make sanity`: pre-commit pack (hello-page smoke test, version resolution, budget and Mermaid extraction tests; later units add the claim validator, allowlist, LaTeX escaping), under 10 s.
 - `make lint`, `make typecheck`, `make test`, `make build`.
 - `make check`: the pre-push gate (lint, typecheck, unit tests, build), under 60 s.
-- `make docs-check`: Mermaid syntax, when Markdown changes.
-- `make doc-service-test`, `make e2e`, `make budget`, `make knip`.
+- `make docs-check`: renders every Mermaid diagram in `docs/`; needs `@mermaid-js/mermaid-cli`.
+- `make doc-service-test`, `make e2e`, `make budget`, `make knip`, `make audit`.
 - `make regression`: everything the post-merge regression pack runs.
-- Local app: `wrangler dev` (port 8787). Secrets template: `.dev.vars.example`.
+- Local app: `make dev` (`wrangler dev`, port 8787). Secrets template: `.dev.vars.example`.
+- Local doc service: `docker build -f services/doc/Dockerfile -t pursuit-kit-doc .` then `docker run --rm -p 8080:8080 -e DOC_SERVICE_SECRET=dev pursuit-kit-doc`. `make doc-service-test` runs its tests with real Tectonic.
 
 ## Rules
 

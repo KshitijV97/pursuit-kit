@@ -1,0 +1,134 @@
+:root {
+  color-scheme: light dark;
+  --ink: #14181f;
+  --muted: #4a5361;
+  --paper: #ffffff;
+  --line: #c9d1dc;
+  --accent: #1a4f8a;
+  --accent-ink: #ffffff;
+  --focus: #b45309;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #eef2f7;
+    --muted: #b6c0cd;
+    --paper: #10151c;
+    --line: #354150;
+    --accent: #8db8e8;
+    --accent-ink: #10151c;
+    --focus: #fbbf24;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.55;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  padding: 0.6rem 1rem;
+  background: var(--accent);
+  color: var(--accent-ink);
+  z-index: 10;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+.site-header {
+  border-bottom: 1px solid var(--line);
+}
+
+.site-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  align-items: baseline;
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 0.9rem 1.25rem;
+}
+
+.brand {
+  font-weight: 700;
+  margin-right: auto;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex="-1"]:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+main {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+h1 {
+  line-height: 1.2;
+  margin-top: 0.5rem;
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.site-footer p {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+}
+
+.version {
+  font-variant-numeric: tabular-nums;
+}
+
+.error-summary {
+  border: 2px solid #b3261e;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.error-summary h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.error-summary ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.field-error {
+  color: #b3261e;
+  font-weight: 600;
+}

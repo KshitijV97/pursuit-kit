@@ -1,0 +1,27 @@
+# Copy to .dev.vars and fill in. Never commit .dev.vars.
+# Every variable is described in docs/reference/env-vars.md.
+
+APP_ENV=development
+
+# 32 random bytes, base64. Used to encrypt the session cookie (ADR 0002).
+SESSION_KEY=
+
+# Google OAuth client (docs/setup/google-oauth.md). Only the drive.file scope is requested.
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# Comma-separated Google-verified email addresses allowed to sign in.
+ALLOWED_EMAILS=
+
+# Anthropic API key. Set a monthly spend limit in the Anthropic console first.
+ANTHROPIC_API_KEY=
+AI_MODEL_EXTRACTION=claude-haiku-5-5
+AI_MODEL_WRITING=claude-sonnet-5-5
+AI_PRICE_TABLE=
+
+# Doc service on Render (docs/setup/render.md). Locally, http://127.0.0.1:8080.
+DOC_SERVICE_URL=
+DOC_SERVICE_SECRET=
+
+# Test-only. Set by vitest and `make e2e`; never set in production.
+# FAKE_EXTERNALS=true

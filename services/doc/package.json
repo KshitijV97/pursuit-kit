@@ -1,0 +1,17 @@
+{
+  "name": "@pursuit-kit/doc",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.9",
+    "hono": "^4.13.19"
+  },
+  "devDependencies": {
+    "vitest": "^5.1.1"
+  }
+}

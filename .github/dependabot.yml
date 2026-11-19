@@ -1,0 +1,24 @@
+version: 2
+updates:
+  # One grouped PR a week for npm packages. Security updates arrive sooner.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # The doc service image's base image.
+  - package-ecosystem: docker
+    directory: /services/doc
+    schedule:
+      interval: weekly
