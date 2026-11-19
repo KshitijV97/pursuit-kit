@@ -6,7 +6,7 @@ Pursuit Kit is a single-user web app that turns a job posting into a tailored re
 
 ## What each folder holds
 
-- `setup/`: one-time setup. Follow these once per machine or account.
+- `setup/`: one-time setup. Follow these once per machine or account. Open steps are GitHub issues labelled `owner-setup`; [setup/README.md](setup/README.md) lists them and what each blocks.
   - [local-dev.md](setup/local-dev.md): Node 26, pnpm, Docker, gitleaks, lefthook, and your local secrets.
   - [google-oauth.md](setup/google-oauth.md): the Google Cloud project, the OAuth client and its scopes.
   - [cloudflare.md](setup/cloudflare.md): the Cloudflare account, API token and Worker secrets.

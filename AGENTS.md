@@ -24,7 +24,7 @@ Stop and ask the owner before:
 - adding anything with a recurring cost, or a host that forbids commercial use (D1, D4);
 - requesting any Google scope wider than `drive.file`;
 - a step that still exceeds the Workers 10 ms CPU limit after its heavy work moves to the doc service;
-- anything needing the owner's accounts (Google Cloud, Cloudflare, Render, GitHub App, Anthropic). Those live as checklists in `docs/setup/`.
+- anything needing the owner's accounts (Google Cloud, Cloudflare, Render, GitHub App, Anthropic). Those steps are GitHub issues labelled `owner-setup`; `docs/setup/` holds the instructions. Check the open issues before assuming a step is missing.
 
 ## Stack
 
