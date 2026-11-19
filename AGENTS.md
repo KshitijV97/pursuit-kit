@@ -24,7 +24,27 @@ Stop and ask the owner before:
 - adding anything with a recurring cost, or a host that forbids commercial use (D1, D4);
 - requesting any Google scope wider than `drive.file`;
 - a step that still exceeds the Workers 10 ms CPU limit after its heavy work moves to the doc service;
-- anything needing the owner's accounts (Google Cloud, Cloudflare, Render, GitHub App, Anthropic). Those steps are GitHub issues labelled `owner-setup`; `docs/setup/` holds the instructions. Check the open issues before assuming a step is missing.
+- anything needing the owner's accounts, secrets or repository settings (Google Cloud, Cloudflare, Render, GitHub App, Anthropic). Those become `owner-action` issues; see Issues and blockers.
+
+## Issues and blockers
+
+GitHub Issues are the only to-do list; a plan is never edited to tick work off. The owner's view of this process is `README.md` (Owner's manual, sections 5 and 6).
+
+- **Before starting**, list open `owner-action` and `owner-decision` issues so you don't re-ask for something already tracked.
+- **Owner action** (an account, console, secret, setting or manual smoke run): open an issue from `.github/ISSUE_TEMPLATE/owner-action.md` with Blocks, Steps (linking `docs/setup/` or a runbook), a checklist and a Done-when check. Hold only the steps that need it and finish the rest; code never waits, since tests run on fakes.
+- **Owner decision** (two valid designs, a plan or ADR contradiction, a stop condition above): ask in chat when the owner is present; otherwise open an issue from `.github/ISSUE_TEMPLATE/owner-decision.md` with a recommended option, return `status: blocked` for that thread, and continue independent work. An answer that changes the plan updates the plan and its ADR in the same PR.
+- **Approved plan**: open or update its tracking issue, and open one `owner-action` issue per owner step in its Operational Notes, linked from the tracking issue.
+- **Dependencies** between issues use GitHub's "blocked by" links, or a `Blocked by: #N` line at the top of the body.
+- **PRs** say `Fixes #N` for the issue they close, and list any open owner blockers.
+- **Leftover review findings** go to the PR's "Unapplied review findings" section, or an issue labelled `ready-for-agent` or `needs-triage`.
+- A `regression` issue blocks releases; fixing it comes before new work.
+
+## Planning and domain docs
+
+- Plans live in `docs/plans/`, written by `/ce-brainstorm` and `/ce-plan`. Compound Engineering owns planning and execution; leave Matt Pocock's `/to-spec`, `/to-tickets` and `/implement` unused.
+- `GLOSSARY.md` is the only vocabulary file. Wherever a Compound Engineering skill reads or writes `CONCEPTS.md`, use `GLOSSARY.md` instead. Use its terms in code, issues and plans, and flag wording that conflicts with it.
+- Read `docs/adr/` before proposing a design. A new ADR follows the existing ADRs' format and is only for a decision that is hard to reverse, surprising without context, and a real trade-off.
+- After a `/grill-with-docs` session, fold its decisions into the plan with `/ce-plan` in the same session; they exist nowhere else.
 
 ## Stack
 
@@ -94,3 +114,17 @@ axe, keyboard and no-JavaScript tests run in the regression pack. Also check by 
 - Docs, diagrams, ADRs and this file match what was built.
 - `knip` passes: no unused code, dependencies or commented-out experiments left behind.
 - The PR description records a manual smoke run against real services when the change touches sign-in, Drive, AI or the doc service.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues on this repo, through the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical roles mapped to this repo's labels (`needs-info` is `owner-decision`, `ready-for-human` is `owner-action`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` at the root and `docs/adr/`. See `docs/agents/domain.md`.

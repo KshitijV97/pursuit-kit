@@ -6,7 +6,7 @@ Pursuit Kit is a single-user web app that turns a job posting into a tailored re
 
 ## What each folder holds
 
-- `setup/`: one-time setup. Follow these once per machine or account. Open steps are GitHub issues labelled `owner-setup`; [setup/README.md](setup/README.md) lists them and what each blocks.
+- `setup/`: one-time setup. Follow these once per machine or account. Open steps are GitHub issues labelled `owner-action`; [setup/README.md](setup/README.md) lists them and what each blocks.
   - [local-dev.md](setup/local-dev.md): Node 26, pnpm, Docker, gitleaks, lefthook, and your local secrets.
   - [google-oauth.md](setup/google-oauth.md): the Google Cloud project, the OAuth client and its scopes.
   - [cloudflare.md](setup/cloudflare.md): the Cloudflare account, API token and Worker secrets.
@@ -24,6 +24,7 @@ Pursuit Kit is a single-user web app that turns a job posting into a tailored re
   - [env-vars.md](reference/env-vars.md): every environment variable and secret.
   - [make-targets.md](reference/make-targets.md): every Make target and what it runs.
   - [data-model.md](reference/data-model.md): the JSON files in your Drive.
+- `agents/`: how agent skills use this repo: the issue tracker, the label mapping and the domain-doc rules. The owner's manual for working with agents is in the root [README.md](../README.md#owners-manual).
 - `adr/`: architecture decision records. Each one records a decision and why it was made, in numbered form. The [decisions index](#architecture-decisions) below lists them.
 - `plans/`: the current product and technical plan, [2026-11-18-1641-feat-pursuit-kit-mvp-plan.md](plans/2026-11-18-1641-feat-pursuit-kit-mvp-plan.md). It holds the requirements (R1–R27), the acceptance examples (AE1–AE12), the key technical decisions (KTD1–KTD15) and the implementation units (U0–U10).
 - `brainstorms/`: the settled setup decisions behind the plan, [2026-11-18-technical-setup-decisions.md](brainstorms/2026-11-18-technical-setup-decisions.md) (D1–D38).
