@@ -15,12 +15,12 @@ The docs in this folder hold the instructions. The issue holds the state and the
 | #19 Point the app at a local doc service | U7 and U8 compile smoke locally | [local-dev.md](local-dev.md) |
 | #20 GitHub App for release-please | The first release | [github-app-for-releases.md](github-app-for-releases.md) |
 | #21 Render service | The doc service in production, after the first release | [render.md](render.md) |
-| #22 Enable branch protection on `main` | Nothing yet; makes the gates binding | [../runbooks/release.md](../runbooks/release.md) |
 
 ## Already done
 
 - Node 26, pnpm through corepack, Docker Desktop, gitleaks and lefthook: [local-dev.md](local-dev.md).
 - Playwright browsers: `pnpm exec playwright install chromium`.
+- Branch protection and merge settings on GitHub (#22): [github-repo-settings.md](github-repo-settings.md).
 
 ## Why issues rather than a checklist file
 

@@ -12,6 +12,7 @@ Pursuit Kit is a single-user web app that turns a job posting into a tailored re
   - [cloudflare.md](setup/cloudflare.md): the Cloudflare account, API token and Worker secrets.
   - [render.md](setup/render.md): the doc service on Render, done after the first release.
   - [github-app-for-releases.md](setup/github-app-for-releases.md): the GitHub App that release-please uses.
+  - [github-repo-settings.md](setup/github-repo-settings.md): merge settings and branch protection on `main`.
   - [secrets.md](setup/secrets.md): every variable and secret, and where it lives.
 - `runbooks/`: repeatable tasks. Follow these each time you do the task.
   - [release.md](runbooks/release.md): cut a release with release-please.

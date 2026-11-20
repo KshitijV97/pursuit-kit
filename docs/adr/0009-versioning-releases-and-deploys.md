@@ -12,6 +12,9 @@ The owner wants proper versioning based on releases, release notes, and producti
 ## Decision
 
 - **Branching:** `main` is protected. Changes land through squash-merged PRs whose titles follow Conventional Commits.
+  - The squash commit takes the PR title, so release-please reads it. Changing that default breaks the changelog.
+  - The protection applies to administrators too: nobody pushes to `main` directly, the owner included.
+  - The exact settings and the commands to check them are in [docs/setup/github-repo-settings.md](../setup/github-repo-settings.md).
 - **Versions:** Semantic Versioning from `v0.1.0`, staying below 1.0 until the MVP's success criteria are met.
 - **Release PR:** **release-please-action v5** (`release-type: node`, manifest config) keeps a release PR open. Merging it bumps the version, updates `CHANGELOG.md`, tags the commit and publishes a GitHub Release.
 - **Token:** the action runs with a **GitHub App token**. PRs opened with the default `GITHUB_TOKEN` don't trigger CI, so the required `regression-gate` check would never run on the release PR. The owner creates the App once (`docs/setup/github-app-for-releases.md`).
