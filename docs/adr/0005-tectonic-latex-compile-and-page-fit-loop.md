@@ -11,7 +11,7 @@ Outputs include a `.tex` source and a PDF compiled from it (R13). The PDF must n
 ## Decision
 
 - The app fills **one resume template and one cover-letter template** (LaTeX, with escaping for every inserted value) from the generated content.
-- The doc service (ADR 0007) runs **Tectonic**. Tectonic is MIT licensed and fetches only the packages a document needs. Those packages are built into the image, because Render's free tier wipes the filesystem when the service sleeps and compiles must never download at run time. The doc service exposes:
+- The doc service (ADR 0007) runs **Tectonic**. Tectonic is MIT licensed and fetches only the packages a document needs. Those packages are built into the image, because Render's free tier wipes the filesystem when the service sleeps and compiles must never download at run time. The image pins one Tectonic version, so a new release can't change layout without a PR ([update-tectonic.md](../runbooks/update-tectonic.md)). The doc service exposes:
   - `POST /compile`: takes a `.tex` source, returns the PDF and its page count, or the compiler log on failure;
   - `GET /health`: a quick liveness check, used as the wake-up call;
   - `GET /health/ready`: also confirms Tectonic runs, used to confirm a deploy came up.

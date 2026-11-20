@@ -21,6 +21,7 @@ Pursuit Kit is a single-user web app that turns a job posting into a tailored re
   - [rotate-secret.md](runbooks/rotate-secret.md): replace a secret safely.
   - [change-ai-model.md](runbooks/change-ai-model.md): change the model used for extraction or writing.
   - [update-price-table.md](runbooks/update-price-table.md): keep the token price table current.
+  - [update-tectonic.md](runbooks/update-tectonic.md): move the doc service to a new Tectonic release.
 - `reference/`: facts you look up rather than follow.
   - [env-vars.md](reference/env-vars.md): every environment variable and secret.
   - [make-targets.md](reference/make-targets.md): every Make target and what it runs.
