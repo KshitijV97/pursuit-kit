@@ -22,16 +22,12 @@ RUN npm install -g corepack@latest \
   && corepack enable \
   && corepack prepare pnpm@10.34.9 --activate
 
-# Tectonic is a single static binary. ARG TECTONIC_VERSION=latest follows the latest release.
-ARG TECTONIC_VERSION=latest
+# Tectonic is a single static binary, pinned so builds are repeatable. Dependabot can't bump an
+# ARG, so docs/runbooks/update-tectonic.md says how to move to a new release. The download URL is
+# not a GitHub API call, so the API's rate limit for anonymous callers never applies.
+ARG TECTONIC_VERSION=0.17.0
 RUN set -eux; \
-  if [ "$TECTONIC_VERSION" = "latest" ]; then \
-    url="$(curl -fsSL https://api.github.com/repos/tectonic-typesetting/tectonic/releases/latest \
-      | grep -o 'https://[^"]*x86_64-unknown-linux-musl.tar.gz' | head -1)"; \
-  else \
-    url="https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/tectonic-${TECTONIC_VERSION}-x86_64-unknown-linux-musl.tar.gz"; \
-  fi; \
-  test -n "$url"; \
+  url="https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/tectonic-${TECTONIC_VERSION}-x86_64-unknown-linux-musl.tar.gz"; \
   curl -fsSL "$url" | tar xz -C /usr/local/bin tectonic; \
   tectonic --version
 
