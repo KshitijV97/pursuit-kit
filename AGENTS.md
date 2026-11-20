@@ -114,6 +114,7 @@ axe, keyboard and no-JavaScript tests run in the regression pack. Also check by 
 - Docs, diagrams, ADRs and this file match what was built.
 - `knip` passes: no unused code, dependencies or commented-out experiments left behind.
 - The PR description records a manual smoke run against real services when the change touches sign-in, Drive, AI or the doc service.
+- Before finishing a task, stop any dev servers, preview servers or Docker containers you started, unless the owner asks to keep them running.
 
 ## Agent skills
 
