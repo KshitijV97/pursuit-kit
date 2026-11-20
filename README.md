@@ -64,8 +64,8 @@ One iteration takes one feature, stage or plan unit from idea to release. The se
    - commits the plan in its own PR, which you merge.
 5. **Build it** (fresh session): `/ce-work docs/plans/<plan>.md`. It builds unit by unit, runs the gates, reviews its own diff, and opens the PR when you tell it to. Anything it needs from you comes back as an issue ([section 6](#6-blockers)).
 6. **Smoke test and merge**: CI must be green. If the change touches sign-in, Drive, AI or the doc service, run the manual smoke test and note it in the PR. Squash-merge.
-7. **After merge**: the regression pack runs on `main`. If it fails, a `regression` issue opens and releases are blocked until it's fixed (`/ce-debug`).
-8. **Keep the lesson**: if something surprised you or a review caught a real defect, run `/ce-compound` so the next agent doesn't repeat it.
+7. **After merge**: the regression pack runs on `main`. If it fails, a `regression` issue opens and releases are blocked until it's fixed: start a fresh session with `/ce-debug #<issue>`; it works from the issue and needs nothing from earlier sessions.
+8. **Keep the lesson**: if something surprised you or a review caught a real defect, run `/ce-compound` so the next agent doesn't repeat it. Run it in the session that made the fix, before closing it: it judges the lesson from what that session tried and dropped, which the diff doesn't show. If you forget, run it later with a one-line description of the problem; it searches the last week's sessions, but may find nothing worth keeping. One lesson per run.
 9. **Release**: when you want to ship, edit "What's new" on release-please's open PR and merge it. That deploys. See [docs/runbooks/release.md](docs/runbooks/release.md).
 
 Small work skips steps 1–4: an issue with a clear "done when" goes straight to `/ce-work` or `/lfg`.
