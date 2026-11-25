@@ -170,7 +170,7 @@ claude plugin install mattpocock-skills@claude-plugins-official
 
 Install Matt Pocock's skills one way only, or every command appears twice. Plugin commands may show with a prefix, such as `/mattpocock-skills:grill-with-docs`.
 
-**OpenCode:** `opencode.json` in the repo root lists the Compound Engineering plugin. Restart OpenCode after changing it. For Matt Pocock's skills:
+**OpenCode:** the Compound Engineering plugin is configured in your user-level config (`~/.config/opencode/opencode.json`), not the repo. To set up a new machine, add `compound-engineering@git+https://github.com/EveryInc/compound-engineering-plugin.git` to the `plugins` array there. Restart OpenCode after changing it. For Matt Pocock's skills:
 
 ```bash
 npx skills@latest add mattpocock/skills -a opencode
@@ -189,6 +189,6 @@ Select all skills: `grill-with-docs` only calls `grilling` and `domain-modeling`
 | Grilling asked everything at once with no recommended answers and never touched `GLOSSARY.md` | `grilling` or `domain-modeling` is missing. Reinstall Matt Pocock's skills with all of them. |
 | Decisions from grilling vanished when planning | The session was cleared before `/ce-plan`. Re-grill the gaps, then plan in the same session. |
 | A `CONCEPTS.md` appeared | Move its terms into `GLOSSARY.md`, delete it, and check AGENTS.md still has the glossary rule. |
-| OpenCode doesn't show `/ce-brainstorm` | Restart OpenCode. Some versions expect the key `"plugin"` rather than `"plugins"` in `opencode.json`. |
+| OpenCode doesn't show `/ce-brainstorm` | Restart OpenCode. Some versions expect the key `"plugin"` rather than `"plugins"` in your user-level config. |
 | An agent asks for a key or account step | Point it at the open `owner-action` issues. If none covers it, it should open one. |
 | A release PR's checks never run | The GitHub App for release-please isn't set up yet (#20). |
