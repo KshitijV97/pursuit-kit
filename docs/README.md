@@ -29,7 +29,7 @@ Pursuit Kit is a single-user web app that turns a job posting into a tailored re
 - `agents/`: how agent skills use this repo: the issue tracker, the label mapping and the domain-doc rules. The owner's manual for working with agents is in the root [README.md](../README.md#owners-manual).
 - `adr/`: architecture decision records. Each one records a decision and why it was made, in numbered form. The [decisions index](#architecture-decisions) below lists them.
 - `plans/`: the current product and technical plan, [2026-11-18-1641-feat-pursuit-kit-mvp-plan.md](plans/2026-11-18-1641-feat-pursuit-kit-mvp-plan.md). It holds the requirements (R1–R27), the acceptance examples (AE1–AE12), the key technical decisions (KTD1–KTD15) and the implementation units (U0–U10).
-- `brainstorms/`: the settled setup decisions behind the plan, [2026-11-18-technical-setup-decisions.md](brainstorms/2026-11-18-technical-setup-decisions.md) (D1–D38).
+- `brainstorms/`: the settled setup decisions behind the plan, [2026-11-18-technical-setup-decisions.md](brainstorms/2026-11-18-technical-setup-decisions.md) (D1–D38). Also [2026-11-25-mcp-native-requirements.md](brainstorms/2026-11-25-mcp-native-requirements.md), the draft requirements for an MCP-native Pursuit Kit (R28–R54), waiting to be planned.
 
 ## Where the rules live
 
